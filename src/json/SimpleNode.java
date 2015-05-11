@@ -2,78 +2,112 @@
 /* JavaCCOptions:MULTI=false,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package json;
 
-public
-class SimpleNode implements Node {
+public class SimpleNode implements Node {
 
-  protected Node parent;
-  protected Node[] children;
-  protected int id;
-  protected Object value;
-  protected Json parser;
+	protected Node parent;
+	protected Node[] children;
+	protected int id;
+	protected Object value;
+	protected Json parser;
 
-  public SimpleNode(int i) {
-    id = i;
-  }
+	private String nodeValue;
 
-  public SimpleNode(Json p, int i) {
-    this(i);
-    parser = p;
-  }
+	public String getNodeValue() {
+		return nodeValue;
+	}
 
-  public void jjtOpen() {
-  }
+	public void setNodeValue(String nodeValue) {
+		this.nodeValue = nodeValue;
+	}
 
-  public void jjtClose() {
-  }
+	public void setNodeValue(String type, String nodeValue) {
+		this.nodeValue = nodeValue;
+	}
 
-  public void jjtSetParent(Node n) { parent = n; }
-  public Node jjtGetParent() { return parent; }
+	public SimpleNode(int i) {
+		id = i;
+	}
 
-  public void jjtAddChild(Node n, int i) {
-    if (children == null) {
-      children = new Node[i + 1];
-    } else if (i >= children.length) {
-      Node c[] = new Node[i + 1];
-      System.arraycopy(children, 0, c, 0, children.length);
-      children = c;
-    }
-    children[i] = n;
-  }
+	public SimpleNode(Json p, int i) {
+		this(i);
+		parser = p;
+	}
 
-  public Node jjtGetChild(int i) {
-    return children[i];
-  }
+	public void jjtOpen() {
+	}
 
-  public int jjtGetNumChildren() {
-    return (children == null) ? 0 : children.length;
-  }
+	public void jjtClose() {
+	}
 
-  public void jjtSetValue(Object value) { this.value = value; }
-  public Object jjtGetValue() { return value; }
+	public void jjtSetParent(Node n) {
+		parent = n;
+	}
 
-  /* You can override these two methods in subclasses of SimpleNode to
-     customize the way the node appears when the tree is dumped.  If
-     your output uses more than one line you should override
-     toString(String), otherwise overriding toString() is probably all
-     you need to do. */
+	public Node jjtGetParent() {
+		return parent;
+	}
 
-  public String toString() { return JsonTreeConstants.jjtNodeName[id]; }
-  public String toString(String prefix) { return prefix + toString(); }
+	public void jjtAddChild(Node n, int i) {
+		if (children == null) {
+			children = new Node[i + 1];
+		} else if (i >= children.length) {
+			Node c[] = new Node[i + 1];
+			System.arraycopy(children, 0, c, 0, children.length);
+			children = c;
+		}
+		children[i] = n;
+	}
 
-  /* Override this method if you want to customize how the node dumps
-     out its children. */
+	public Node jjtGetChild(int i) {
+		return children[i];
+	}
 
-  public void dump(String prefix) {
-    System.out.println(toString(prefix));
-    if (children != null) {
-      for (int i = 0; i < children.length; ++i) {
-        SimpleNode n = (SimpleNode)children[i];
-        if (n != null) {
-          n.dump(prefix + " ");
-        }
-      }
-    }
-  }
+	public int jjtGetNumChildren() {
+		return (children == null) ? 0 : children.length;
+	}
+
+	public void jjtSetValue(Object value) {
+		this.value = value;
+	}
+
+	public Object jjtGetValue() {
+		return value;
+	}
+
+	/*
+	 * You can override these two methods in subclasses of SimpleNode to
+	 * customize the way the node appears when the tree is dumped. If your
+	 * output uses more than one line you should override toString(String),
+	 * otherwise overriding toString() is probably all you need to do.
+	 */
+
+	public String toString() {
+		return JsonTreeConstants.jjtNodeName[id];
+	}
+
+	public String toString(String prefix) {
+		return prefix + toString();
+	}
+
+	/*
+	 * Override this method if you want to customize how the node dumps out its
+	 * children.
+	 */
+
+	public void dump(String prefix) {
+		System.out.println(toString(prefix));
+		if (children != null) {
+			for (int i = 0; i < children.length; ++i) {
+				SimpleNode n = (SimpleNode) children[i];
+				if (n != null) {
+					n.dump(prefix + " ");
+				}
+			}
+		}
+	}
 }
 
-/* JavaCC - OriginalChecksum=68589b8945d4b850c98573eedea9a66f (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=68589b8945d4b850c98573eedea9a66f (do not edit this
+ * line)
+ */

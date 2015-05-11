@@ -9,7 +9,9 @@ public interface JsonTreeConstants
   public int JJTLINKS = 3;
   public int JJTNODE = 4;
   public int JJTLINK = 5;
-  public int JJTERROR_SKIPTO = 6;
+  public int JJTNAME = 6;
+  public int JJTINT = 7;
+  public int JJTERROR_SKIPTO = 8;
 
 
   public String[] jjtNodeName = {
@@ -19,7 +21,9 @@ public interface JsonTreeConstants
     "links",
     "node",
     "link",
+    "Name",
+    "Int",
     "error_skipto",
   };
 }
-/* JavaCC - OriginalChecksum=58888e3413b7a706281840292b0b32c0 (do not edit this line) */
+/* JavaCC - OriginalChecksum=20f8dab4c9c09ecdc0e4e3dbe6568185 (do not edit this line) */
