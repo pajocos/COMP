@@ -34,5 +34,7 @@ interface Node {
   public int jjtGetNumChildren();
   
   public String getNodeValue();
+  public int getBeginLine();
+  public int getBeginColumn();
 }
 /* JavaCC - OriginalChecksum=58a1503a961e3ce1df531e883e919630 (do not edit this line) */

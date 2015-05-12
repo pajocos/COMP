@@ -1,29 +1,33 @@
 package json;
 
 public class ArrayLink {
-	private int source, target, value;
+	private int source, target, value,beginColumn, beginLine;
+
+	public void setValues(int source, int target, int value, int beginLine, int beginColumn) {
+		this.source = source;
+		this.target = target;
+		this.value = value;
+		this.beginLine = beginLine;
+		this.beginColumn = beginColumn;
+	}
 
 	public int getSource() {
 		return source;
 	}
+	
+	public int getBeginColumn() {
+		return beginColumn;
+	}
 
-	public void setSource(int source) {
-		this.source = source;
+	public int getBeginLine() {
+		return beginLine;
 	}
 
 	public int getTarget() {
 		return target;
 	}
 
-	public void setTarget(int target) {
-		this.target = target;
-	}
-
 	public int getValue() {
 		return value;
-	}
-
-	public void setValue(int value) {
-		this.value = value;
 	}
 }

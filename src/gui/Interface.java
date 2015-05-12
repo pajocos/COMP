@@ -96,6 +96,7 @@ public class Interface extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				textArea.setText("");
 				if (path == null) {
 					JOptionPane.showMessageDialog(null, "No file choosed!");
 				} else {

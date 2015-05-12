@@ -11,17 +11,24 @@ public class SimpleNode implements Node {
 	protected Json parser;
 
 	private String nodeValue;
+	private int beginLine, beginColumn;
+	
+	public void setValues(Token t) {
+		this.nodeValue = t.image.toString();
+		this.beginLine = t.beginLine;
+		this.beginColumn = t.beginColumn;
+	}
+
+	public int getBeginLine() {
+		return beginLine;
+	}
+
+	public int getBeginColumn() {
+		return beginColumn;
+	}
 
 	public String getNodeValue() {
 		return nodeValue;
-	}
-
-	public void setNodeValue(String nodeValue) {
-		this.nodeValue = nodeValue;
-	}
-
-	public void setNodeValue(String type, String nodeValue) {
-		this.nodeValue = nodeValue;
 	}
 
 	public SimpleNode(int i) {
