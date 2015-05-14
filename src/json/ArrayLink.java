@@ -1,9 +1,11 @@
 package json;
 
 public class ArrayLink {
-	private int source, target, value,beginColumn, beginLine;
+	private int source, target, value, beginColumn, beginLine;
+	String style = "";
 
-	public void setValues(int source, int target, int value, int beginLine, int beginColumn) {
+	public void setValues(int source, int target, int value, int beginLine,
+			int beginColumn) {
 		this.source = source;
 		this.target = target;
 		this.value = value;
@@ -14,7 +16,7 @@ public class ArrayLink {
 	public int getSource() {
 		return source;
 	}
-	
+
 	public int getBeginColumn() {
 		return beginColumn;
 	}
@@ -29,5 +31,13 @@ public class ArrayLink {
 
 	public int getValue() {
 		return value;
+	}
+
+	public String getStyle() {
+		return style;
+	}
+
+	public void setStyle(String style) {
+		this.style = style;
 	}
 }

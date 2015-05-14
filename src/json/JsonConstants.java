@@ -25,23 +25,27 @@ public interface JsonConstants {
   /** RegularExpression Id. */
   int VALUE = 11;
   /** RegularExpression Id. */
-  int INTEGER = 12;
+  int QUOTE = 12;
   /** RegularExpression Id. */
-  int LETTER = 13;
+  int SHAPE = 13;
   /** RegularExpression Id. */
-  int OBRACKET = 14;
+  int STYLE = 14;
   /** RegularExpression Id. */
-  int CBRACKET = 15;
+  int INTEGER = 15;
   /** RegularExpression Id. */
-  int OBRA = 16;
+  int LETTER = 16;
   /** RegularExpression Id. */
-  int CBRA = 17;
+  int OBRACKET = 17;
   /** RegularExpression Id. */
-  int TD = 18;
+  int CBRACKET = 18;
   /** RegularExpression Id. */
-  int COMMA = 19;
+  int OBRA = 19;
   /** RegularExpression Id. */
-  int QUOTE = 20;
+  int CBRA = 20;
+  /** RegularExpression Id. */
+  int TD = 21;
+  /** RegularExpression Id. */
+  int COMMA = 22;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -60,6 +64,9 @@ public interface JsonConstants {
     "\"\\\"source\\\"\"",
     "\"\\\"target\\\"\"",
     "\"\\\"value\\\"\"",
+    "\"\\\"\"",
+    "\"\\\"shape\\\"\"",
+    "\"\\\"style\\\"\"",
     "<INTEGER>",
     "<LETTER>",
     "\"{\"",
@@ -68,7 +75,6 @@ public interface JsonConstants {
     "\"]\"",
     "\":\"",
     "\",\"",
-    "\"\\\"\"",
   };
 
 }

@@ -18,7 +18,9 @@ public class SimpleNode implements Node {
 		this.beginLine = t.beginLine;
 		this.beginColumn = t.beginColumn;
 	}
+	
 
+	
 	public int getBeginLine() {
 		return beginLine;
 	}

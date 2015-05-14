@@ -9,15 +9,25 @@ import java.io.File;
 import java.io.PrintWriter;
 
 public class Json/*@bgen(jjtree)*/implements JsonTreeConstants, JsonConstants {/*@bgen(jjtree)*/
-  protected JJTJsonState jjtree = new JJTJsonState();public static void main(String args []) throws ParseException, FileNotFoundException, UnsupportedEncodingException
+  protected JJTJsonState jjtree = new JJTJsonState();private static String [] edgeStyle =
+  {
+    "dashed", "dotted", "solid", "bold"
+  }
+  ;
+
+  private static String [] nodeShapes =
+  {
+    "box", "polygon", "ellipse", "oval", "circle", "point", "egg", "triangle", "plaintext", "plain", "diamond", "trapezium", "parallelogram", "house", "pentagon", "hexagon", "septagon", "octagon", "doublecircle", "doubleoctagon", "tripleoctagon", "invtriangle", "invtrapezium", "invhouse", "Mdiamond", "Msquare", "Mcircle", "rect", "rectangle", "square", "star", "none", "underline", "note", "tab", "folder", "box3d", "component", "promoter", "cds", "terminator", "utr", "primersite", "restrictionsite", "fivepoverhang", "threepoverhang", "noverhang", "assembly", "signature", "insulator", "ribosite", "rnastab", "proteasesite", "proteinstab", "rpromoter", "rarrow", "larrow", "lpromoter"
+  }
+  ;
+
+  public static void main(String args []) throws ParseException, FileNotFoundException, UnsupportedEncodingException
   {
     Json json = new Json(new java.io.FileInputStream(args [0]));
     SimpleNode root = json.Expression();
     root.dump("");
-    SimpleNode nodes = (SimpleNode) root.jjtGetChild(0);
-    SimpleNode links = (SimpleNode) root.jjtGetChild(1);
-    ArrayNode [] newNodes = processNodes(nodes);
-    boolean duplicatedNames = verifyDuplicatedNames(newNodes);
+    SimpleNode nodes = (SimpleNode) root.jjtGetChild(0); //Nó com todos os nós    SimpleNode links = (SimpleNode) root.jjtGetChild(1); //Nó com todos os links    ArrayNode [] newNodes = processNodes(nodes);
+    boolean duplicatedNames = verifyNodes(newNodes);
     ArrayLink [] newLinks = processLinks(links);
     boolean errorLinks = verifyLinks(newLinks, newNodes.length);
     if (errorLinks || duplicatedNames)
@@ -38,6 +48,10 @@ public class Json/*@bgen(jjtree)*/implements JsonTreeConstants, JsonConstants {/
       ArrayNode an = new ArrayNode();
       an.setName(nodes.jjtGetChild(i).jjtGetChild(0).getNodeValue());
       an.setGroup(Integer.parseInt(nodes.jjtGetChild(i).jjtGetChild(1).getNodeValue()));
+      if (nodes.jjtGetChild(i).jjtGetNumChildren() == 3)
+      {
+        an.setShape(nodes.jjtGetChild(i).jjtGetChild(2).getNodeValue());
+      }
       an.setBeginLine(nodes.jjtGetChild(i).jjtGetChild(0).getBeginLine());
       an.setBeginColumn(nodes.jjtGetChild(i).jjtGetChild(0).getBeginColumn());
       newNodes [i] = an;
@@ -52,25 +66,42 @@ public class Json/*@bgen(jjtree)*/implements JsonTreeConstants, JsonConstants {/
     {
       ArrayLink an = new ArrayLink();
       an.setValues(Integer.parseInt(links.jjtGetChild(i).jjtGetChild(0).getNodeValue()), Integer.parseInt(links.jjtGetChild(i).jjtGetChild(1).getNodeValue()), Integer.parseInt(links.jjtGetChild(i).jjtGetChild(2).getNodeValue()), links.jjtGetChild(i).jjtGetChild(0).getBeginLine(), links.jjtGetChild(i).jjtGetChild(0).getBeginColumn());
+      if (links.jjtGetChild(i).jjtGetNumChildren() == 4)
+      {
+        an.setStyle(links.jjtGetChild(i).jjtGetChild(3).getNodeValue());
+      }
       newLinks [i] = an;
     }
     return newLinks;
   }
 
-  public static boolean verifyDuplicatedNames(ArrayNode [] nodes)
+  public static boolean verifyNodes(ArrayNode [] nodes)
   {
     Set < String > tempSet = new HashSet < String > ();
-    boolean duplicated = false;
+    boolean error = false;
     for (int i = 0; i < nodes.length; i++)
     {
+      boolean existShape = false;
       String str = nodes [i].getName();
       if (!tempSet.add(str))
       {
         System.out.println("Duplicated name: " + str + " at line " + nodes [i].getBeginLine() + " column " + nodes [i].getBeginColumn());
-        duplicated = true;
+        error = true;
+      }
+      for (int j = 0; j < nodeShapes.length; j++)
+      {
+        if (nodes [i].getShape().equals("\u005c"" + nodeShapes [j] + "\u005c""))
+        {
+          existShape = true;
+        }
+      }
+      if (!existShape && !nodes [i].getShape().equals(""))
+      {
+        System.out.println("Unknown shape: " + nodes [i].getShape() + " at line " + nodes [i].getBeginLine() + " column " + nodes [i].getBeginColumn());
+        error = true;
       }
     }
-    return duplicated;
+    return error;
   }
 
   public static boolean verifyLinks(ArrayLink [] links, int numNodes)
@@ -78,6 +109,7 @@ public class Json/*@bgen(jjtree)*/implements JsonTreeConstants, JsonConstants {/
     boolean error = false;
     for (int i = 0; i < links.length; i++)
     {
+      boolean existStyle = false;
       int source = links [i].getSource();
       int target = links [i].getTarget();
       if (source >= numNodes || target >= numNodes) //Verifica se os nos de origem e destino existem      {
@@ -95,6 +127,18 @@ public class Json/*@bgen(jjtree)*/implements JsonTreeConstants, JsonConstants {/
           System.out.println("Duplicated link at line " + links [i].getBeginLine() + " column " + links [i].getBeginColumn());
         }
       }
+      for (int k = 0; k < edgeStyle.length; k++)
+      {
+        if (links [i].getStyle().equals("\u005c"" + edgeStyle [k] + "\u005c""))
+        {
+          existStyle = true;
+        }
+      }
+      if (!existStyle && !links [i].getStyle().equals(""))
+      {
+        error = true;
+        System.out.println("Link style doesn't exist at line " + links [i].getBeginLine() + " column " + links [i].getBeginColumn());
+      }
     }
     return error;
   }
@@ -104,12 +148,25 @@ public class Json/*@bgen(jjtree)*/implements JsonTreeConstants, JsonConstants {/
     int success = 0;
     GraphViz gv = new GraphViz();
     gv.addln(gv.start_graph());
+    for (int i = 0; i < nodes.length; i++)
+    {
+      if (!nodes [i].getShape().equals(""))
+      {
+        gv.addln(nodes [i].getName() + " [shape=" + nodes [i].getShape() + "];");
+      }
+    }
     for (int i = 0; i < links.length; i++)
     {
-      gv.addln(nodes [links [i].getSource()].getName() + " -> " + nodes [links [i].getTarget()].getName() + " [label = " + links [i].getValue() + "] ;");
+      String line = nodes [links [i].getSource()].getName() + " -> " + nodes [links [i].getTarget()].getName() + " [label = " + links [i].getValue();
+      if (!links [i].getStyle().equals(""))
+      {
+        line += ", style=" + links [i].getStyle();
+      }
+      line += "] ;";
+      gv.addln(line);
     }
     gv.addln(gv.end_graph());
-    File out = new File(saveName + "." + type);
+    File out = new File(savePath + "\u005c\u005c" + saveName + "." + type);
     File tempFolder = new File(savePath + "\u005c\u005ctemp_D3fdg2Dot");
     GraphViz.setTEMP_DIR(savePath + "\u005c\u005ctemp_D3fdg2Dot");
     GraphViz.setDOT(graphvizPath);
@@ -273,6 +330,17 @@ public class Json/*@bgen(jjtree)*/implements JsonTreeConstants, JsonConstants {/
       jj_consume_token(GROUP);
       jj_consume_token(TD);
       Expression7();
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case COMMA:
+        jj_consume_token(COMMA);
+        jj_consume_token(SHAPE);
+        jj_consume_token(TD);
+        Expression6();
+        break;
+      default:
+        jj_la1[2] = jj_gen;
+        ;
+      }
       jj_consume_token(CBRACKET);
     } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -313,6 +381,17 @@ public class Json/*@bgen(jjtree)*/implements JsonTreeConstants, JsonConstants {/
       jj_consume_token(VALUE);
       jj_consume_token(TD);
       Expression7();
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case COMMA:
+        jj_consume_token(COMMA);
+        jj_consume_token(STYLE);
+        jj_consume_token(TD);
+        Expression6();
+        break;
+      default:
+        jj_la1[3] = jj_gen;
+        ;
+      }
       jj_consume_token(CBRACKET);
     } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -337,7 +416,7 @@ public class Json/*@bgen(jjtree)*/implements JsonTreeConstants, JsonConstants {/
 
   final public void Expression6() throws ParseException {
   Token t;
-    SimpleNode jjtn001 = new SimpleNode(JJTNAME);
+    SimpleNode jjtn001 = new SimpleNode(JJTLETTER);
     boolean jjtc001 = true;
     jjtree.openNodeScope(jjtn001);
     try {
@@ -397,13 +476,13 @@ try {ParseException e = generateParseException(); // generate the exception obje
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[2];
+  final private int[] jj_la1 = new int[4];
   static private int[] jj_la1_0;
   static {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x80000,0x80000,};
+      jj_la1_0 = new int[] {0x400000,0x400000,0x400000,0x400000,};
    }
 
   /** Constructor with InputStream. */
@@ -417,7 +496,7 @@ try {ParseException e = generateParseException(); // generate the exception obje
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 4; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -432,7 +511,7 @@ try {ParseException e = generateParseException(); // generate the exception obje
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 4; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -442,7 +521,7 @@ try {ParseException e = generateParseException(); // generate the exception obje
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 4; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -453,7 +532,7 @@ try {ParseException e = generateParseException(); // generate the exception obje
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 4; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -462,7 +541,7 @@ try {ParseException e = generateParseException(); // generate the exception obje
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 4; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -472,7 +551,7 @@ try {ParseException e = generateParseException(); // generate the exception obje
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 4; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -523,12 +602,12 @@ try {ParseException e = generateParseException(); // generate the exception obje
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[21];
+    boolean[] la1tokens = new boolean[23];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 4; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -537,7 +616,7 @@ try {ParseException e = generateParseException(); // generate the exception obje
         }
       }
     }
-    for (int i = 0; i < 21; i++) {
+    for (int i = 0; i < 23; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

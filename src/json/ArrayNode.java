@@ -1,7 +1,7 @@
 package json;
 
 public class ArrayNode {
-	private String name;
+	private String name, shape = "";
 	private int group, beginLine, beginColumn;
 
 	public int getBeginLine() {
@@ -34,5 +34,13 @@ public class ArrayNode {
 
 	public void setGroup(int group) {
 		this.group = group;
+	}
+
+	public void setShape(String shape) {
+		this.shape = shape;
+	}
+
+	public String getShape() {
+		return shape;
 	}
 }
