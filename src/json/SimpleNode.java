@@ -22,7 +22,7 @@ public class SimpleNode implements Node {
 	public int getBeginLine() {
 		return beginLine;
 	}
-
+ 
 	public int getBeginColumn() {
 		return beginColumn;
 	}
