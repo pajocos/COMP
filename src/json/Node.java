@@ -3,38 +3,51 @@
 package json;
 
 /* All AST nodes must implement this interface.  It provides basic
-   machinery for constructing the parent and child relationships
-   between nodes. */
+ machinery for constructing the parent and child relationships
+ between nodes. */
 
-public
-interface Node {
+public interface Node {
 
-  /** This method is called after the node has been made the current
-    node.  It indicates that child nodes can now be added to it. */
-  public void jjtOpen();
+	/**
+	 * This method is called after the node has been made the current node. It
+	 * indicates that child nodes can now be added to it.
+	 */
+	public void jjtOpen();
 
-  /** This method is called after all the child nodes have been
-    added. */
-  public void jjtClose();
+	/**
+	 * This method is called after all the child nodes have been added.
+	 */
+	public void jjtClose();
 
-  /** This pair of methods are used to inform the node of its
-    parent. */
-  public void jjtSetParent(Node n);
-  public Node jjtGetParent();
+	/**
+	 * This pair of methods are used to inform the node of its parent.
+	 */
+	public void jjtSetParent(Node n);
 
-  /** This method tells the node to add its argument to the node's
-    list of children.  */
-  public void jjtAddChild(Node n, int i);
+	public Node jjtGetParent();
 
-  /** This method returns a child node.  The children are numbered
-     from zero, left to right. */
-  public Node jjtGetChild(int i);
+	/**
+	 * This method tells the node to add its argument to the node's list of
+	 * children.
+	 */
+	public void jjtAddChild(Node n, int i);
 
-  /** Return the number of children the node has. */
-  public int jjtGetNumChildren();
-  
-  public String getNodeValue();
-  public int getBeginLine();
-  public int getBeginColumn();
+	/**
+	 * This method returns a child node. The children are numbered from zero,
+	 * left to right.
+	 */
+	public Node jjtGetChild(int i);
+
+	/** Return the number of children the node has. */
+	public int jjtGetNumChildren();
+
+	public String getNodeValue();
+
+	public int getBeginLine();
+
+	public int getBeginColumn();
 }
-/* JavaCC - OriginalChecksum=58a1503a961e3ce1df531e883e919630 (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=58a1503a961e3ce1df531e883e919630 (do not edit this
+ * line)
+ */

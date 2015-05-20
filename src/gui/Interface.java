@@ -39,7 +39,7 @@ public class Interface extends JFrame {
 	private JTextField filePath;
 	private String path = null;
 	private String graphPath = "";
-	private String directory =  "";
+	private String directory = "";
 	private JTextArea textArea;
 	private JTextField graphvizPath;
 	private JTextField fileName;

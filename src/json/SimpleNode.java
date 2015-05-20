@@ -12,19 +12,17 @@ public class SimpleNode implements Node {
 
 	private String nodeValue;
 	private int beginLine, beginColumn;
-	
+
 	public void setValues(Token t) {
 		this.nodeValue = t.image.toString();
 		this.beginLine = t.beginLine;
 		this.beginColumn = t.beginColumn;
 	}
-	
 
-	
 	public int getBeginLine() {
 		return beginLine;
 	}
- 
+
 	public int getBeginColumn() {
 		return beginColumn;
 	}

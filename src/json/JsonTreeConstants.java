@@ -11,7 +11,7 @@ public interface JsonTreeConstants
   public int JJTLINK = 5;
   public int JJTLETTER = 6;
   public int JJTINT = 7;
-  public int JJTERROR_SKIPTO = 8;
+  public int JJTSYNTATICERROR = 8;
 
 
   public String[] jjtNodeName = {
@@ -23,7 +23,7 @@ public interface JsonTreeConstants
     "link",
     "Letter",
     "Int",
-    "error_skipto",
+    "SyntaticError",
   };
 }
-/* JavaCC - OriginalChecksum=0d88ebb0098955c7329964fa36bc21fc (do not edit this line) */
+/* JavaCC - OriginalChecksum=0656dd849cf519cc5205cf7255ba3f8c (do not edit this line) */
