@@ -4,7 +4,6 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.ButtonGroup;
 import javax.swing.JFileChooser;
@@ -44,13 +43,15 @@ public class Interface extends JFrame {
 	private JTextField graphvizPath;
 	private JTextField fileName;
 
-	ButtonGroup buttonGroup;
-	JRadioButton rdbtnDot;
-	JRadioButton rdbtnPdf;
-	JRadioButton rdbtnPng;
-	JRadioButton rdbtnPlain;
+	private ButtonGroup buttonGroup;
+	private JRadioButton rdbtnDot;
+	private JRadioButton rdbtnPdf;
+	private JRadioButton rdbtnPng;
+	private JRadioButton rdbtnPlain;
 	private JLabel lblSelectFolderTo;
 	private JTextField save;
+	private JPanel outputPanel;
+	private JPanel filesPanel;
 
 	/**
 	 * Launch the application.
@@ -75,51 +76,129 @@ public class Interface extends JFrame {
 		setTitle("D3fdg2Dot");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 750, 600);
+		setResizable(false);
 		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
+		filesPanel = new JPanel();
+		filesPanel.setBounds(0, 0, 444, 173);
+		contentPane.add(filesPanel);
+		filesPanel.setLayout(null);
+		
+		outputPanel = new JPanel();
+		outputPanel.setBounds(444, 0, 300, 173);
+		contentPane.add(outputPanel);
+		outputPanel.setLayout(null);
+		outputType();
+		
+		//ALL BUTTONS
+		buttons();
+
+		//LABELS AND TEXTFIELD FOR PATHS
+		paths();
+				
+		//FILENAME
+		JLabel lblFilename = new JLabel("Filename");
+		lblFilename.setHorizontalAlignment(SwingConstants.CENTER);
+		lblFilename.setBounds(100, 5, 100, 19);
+		outputPanel.add(lblFilename);
+		lblFilename.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		
+		fileName = new JTextField();
+		fileName.setBounds(25, 29, 250, 25);
+		outputPanel.add(fileName);
+		fileName.setColumns(10);
+
+		// CONSOLE
+		textArea = new JTextArea();
+		contentPane.add(textArea);
+		JScrollPane scrollPane = new JScrollPane(textArea);
+		scrollPane.setBounds(0, 180, 745, 385);
+		contentPane.add(scrollPane);
+
+		redirectSystemStreams();
+	}
+
+	private void paths() {
+		//PATH TO GENERATED FILE
+		lblSelectFolderTo = new JLabel("Select folder to save generated file");
+		lblSelectFolderTo.setBounds(56, 59, 226, 19);
+		filesPanel.add(lblSelectFolderTo);
+		lblSelectFolderTo.setFont(new Font("Tahoma", Font.PLAIN, 15));
+
+		save = new JTextField();
+		save.setBounds(15, 83, 308, 25);
+		filesPanel.add(save);
+		save.setColumns(10);
+
+		//FILE TO COMPILE
 		JLabel lblChooseAFile = new JLabel("Choose a file to compile");
+		lblChooseAFile.setBounds(92, 5, 154, 19);
+		filesPanel.add(lblChooseAFile);
 		lblChooseAFile.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblChooseAFile.setBounds(30, 13, 257, 16);
 		lblChooseAFile.setHorizontalAlignment(SwingConstants.CENTER);
-		contentPane.add(lblChooseAFile);
-
-		JButton btnSelectFile = new JButton("Select file");
-		btnSelectFile.setBounds(327, 30, 100, 30);
-		contentPane.add(btnSelectFile);
-		btnSelectFile.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				final JFileChooser fileChooser = new JFileChooser();
-				FileNameExtensionFilter filter = new FileNameExtensionFilter(
-						"TXT File", "txt");
-				fileChooser.setFileFilter(filter);
-				int temp = fileChooser.showOpenDialog(null);
-				if (temp == JFileChooser.APPROVE_OPTION) {
-					path = fileChooser.getSelectedFile().getAbsolutePath();
-					filePath.setText(path);
-				}
-			}
-		});
 
 		filePath = new JTextField();
-		filePath.setBounds(12, 33, 300, 25);
-		contentPane.add(filePath);
+		filePath.setBounds(15, 29, 308, 25);
+		filesPanel.add(filePath);
 		filePath.setColumns(10);
 
+		//GRAPHVIZ PATH
+		JLabel lblPathToDotexe = new JLabel(
+				"Path to dot.exe in Graphviz folder");
+		lblPathToDotexe.setBounds(60, 113, 219, 19);
+		filesPanel.add(lblPathToDotexe);
+		lblPathToDotexe.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		
 		graphvizPath = new JTextField();
+		graphvizPath.setBounds(15, 137, 308, 25);
+		filesPanel.add(graphvizPath);
 		graphvizPath.setText("If nothing selected it will not be used");
 		graphvizPath.setToolTipText("");
-		graphvizPath.setBounds(12, 85, 300, 25);
-		contentPane.add(graphvizPath);
 		graphvizPath.setColumns(10);
+	}
 
+	private void outputType() {
+		JLabel lblOutputType = new JLabel("Output type");
+		lblOutputType.setBounds(105, 59, 80, 19);
+		outputPanel.add(lblOutputType);
+		lblOutputType.setFont(new Font("Tahoma", Font.PLAIN, 15));
+
+		buttonGroup = new ButtonGroup();
+		rdbtnDot = new JRadioButton("DOT");
+		rdbtnDot.setBounds(12, 83, 59, 27);
+		outputPanel.add(rdbtnDot);
+		rdbtnDot.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		buttonGroup.add(rdbtnDot);
+		rdbtnDot.setSelected(true);
+
+		rdbtnPdf = new JRadioButton("PDF");
+		rdbtnPdf.setBounds(83, 83, 55, 27);
+		outputPanel.add(rdbtnPdf);
+		rdbtnPdf.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		buttonGroup.add(rdbtnPdf);
+		rdbtnPdf.setEnabled(false);
+
+		rdbtnPng = new JRadioButton("PNG");
+		rdbtnPng.setBounds(150, 83, 57, 27);
+		outputPanel.add(rdbtnPng);
+		rdbtnPng.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		buttonGroup.add(rdbtnPng);
+		rdbtnPng.setEnabled(false);
+
+		rdbtnPlain = new JRadioButton("PLAIN");
+		rdbtnPlain.setBounds(219, 83, 69, 27);
+		outputPanel.add(rdbtnPlain);
+		rdbtnPlain.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		buttonGroup.add(rdbtnPlain);
+		rdbtnPlain.setEnabled(false);
+	}
+
+	private void buttons() {
 		JButton btnGraphViz = new JButton("Select Path");
-		btnGraphViz.setBounds(327, 82, 100, 30);
-		contentPane.add(btnGraphViz);
+		btnGraphViz.setBounds(335, 137, 100, 25);
+		filesPanel.add(btnGraphViz);
 		btnGraphViz.addActionListener(new ActionListener() {
 
 			@Override
@@ -138,69 +217,28 @@ public class Interface extends JFrame {
 				}
 			}
 		});
+		
+		JButton btnSelectFile = new JButton("Select file");
+		btnSelectFile.setBounds(335, 29, 100, 25);
+		filesPanel.add(btnSelectFile);
+		btnSelectFile.addActionListener(new ActionListener() {
 
-		JLabel lblPathToDotexe = new JLabel(
-				"Path to dot.exe in Graphviz folder");
-		lblPathToDotexe.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblPathToDotexe.setBounds(50, 66, 241, 16);
-		contentPane.add(lblPathToDotexe);
-
-		fileName = new JTextField();
-		fileName.setBounds(538, 33, 170, 25);
-		contentPane.add(fileName);
-		fileName.setColumns(10);
-
-		JLabel lblFilename = new JLabel("Filename");
-		lblFilename.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblFilename.setBounds(476, 37, 70, 16);
-		contentPane.add(lblFilename);
-
-		rdbtnDot = new JRadioButton("DOT");
-		rdbtnDot.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		rdbtnDot.setBounds(548, 73, 70, 25);
-		contentPane.add(rdbtnDot);
-
-		rdbtnPdf = new JRadioButton("PDF");
-		rdbtnPdf.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		rdbtnPdf.setBounds(625, 73, 70, 25);
-		contentPane.add(rdbtnPdf);
-
-		rdbtnPng = new JRadioButton("PNG");
-		rdbtnPng.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		rdbtnPng.setBounds(548, 103, 70, 25);
-		contentPane.add(rdbtnPng);
-
-		rdbtnPlain = new JRadioButton("PLAIN");
-		rdbtnPlain.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		rdbtnPlain.setBounds(625, 103, 70, 25);
-		contentPane.add(rdbtnPlain);
-
-		buttonGroup = new ButtonGroup();
-		buttonGroup.add(rdbtnPlain);
-		buttonGroup.add(rdbtnDot);
-		buttonGroup.add(rdbtnPdf);
-		buttonGroup.add(rdbtnPng);
-		rdbtnDot.setSelected(true);
-		rdbtnPdf.setEnabled(false);
-		rdbtnPng.setEnabled(false);
-		rdbtnPlain.setEnabled(false);
-
-		JLabel lblOutputType = new JLabel("Output type");
-		lblOutputType.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblOutputType.setBounds(456, 88, 90, 16);
-		contentPane.add(lblOutputType);
-
-		// CONSOLE
-		textArea = new JTextArea();
-		textArea.setBounds(0, 173, 732, 380);
-		contentPane.add(textArea);
-		JScrollPane scrollPane = new JScrollPane(textArea);
-		scrollPane.setBounds(0, 173, 732, 380);
-		contentPane.add(scrollPane);
-
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				final JFileChooser fileChooser = new JFileChooser();
+				FileNameExtensionFilter filter = new FileNameExtensionFilter(
+						"TXT File", "txt");
+				fileChooser.setFileFilter(filter);
+				int temp = fileChooser.showOpenDialog(null);
+				if (temp == JFileChooser.APPROVE_OPTION) {
+					path = fileChooser.getSelectedFile().getAbsolutePath();
+					filePath.setText(path);
+				}
+			}
+		});
 		JButton btnSelectPath = new JButton("Select Path");
-		btnSelectPath.setBounds(327, 136, 100, 30);
-		contentPane.add(btnSelectPath);
+		btnSelectPath.setBounds(335, 83, 100, 25);
+		filesPanel.add(btnSelectPath);
 		btnSelectPath.addActionListener(new ActionListener() {
 
 			@Override
@@ -219,20 +257,10 @@ public class Interface extends JFrame {
 			}
 		});
 
-		lblSelectFolderTo = new JLabel("Select folder to save generated file");
-		lblSelectFolderTo.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblSelectFolderTo.setBounds(46, 118, 241, 16);
-		contentPane.add(lblSelectFolderTo);
-
-		save = new JTextField();
-		save.setBounds(12, 138, 300, 25);
-		contentPane.add(save);
-		save.setColumns(10);
-
-		// COMPILE
+		// COMPILE BUTTOn
 		JButton btnCompile = new JButton("Compile");
-		btnCompile.setBounds(525, 136, 100, 30);
-		contentPane.add(btnCompile);
+		btnCompile.setBounds(100, 137, 100, 25);
+		outputPanel.add(btnCompile);
 		btnCompile.addActionListener(new ActionListener() {
 
 			@Override
@@ -270,7 +298,6 @@ public class Interface extends JFrame {
 			}
 		});
 
-		redirectSystemStreams();
 	}
 
 	private void updateTextArea(final String text) {
