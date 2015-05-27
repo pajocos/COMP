@@ -2,11 +2,13 @@
 package json;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import graphviz.GraphViz;
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.Random;
 
 /** Token Manager. */
 public class JsonTokenManager implements JsonConstants
