@@ -204,6 +204,8 @@ public class Interface extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				final JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setDialogTitle("Select path to DOT.EXE");
+				fileChooser.setAcceptAllFileFilterUsed(false);
 				FileNameExtensionFilter filter = new FileNameExtensionFilter(
 						"DOT.EXE", "exe");
 				fileChooser.setFileFilter(filter);
@@ -226,6 +228,8 @@ public class Interface extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				final JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setDialogTitle("Select file to compile");
+				fileChooser.setAcceptAllFileFilterUsed(false);
 				FileNameExtensionFilter filter = new FileNameExtensionFilter(
 						"TXT File", "txt");
 				fileChooser.setFileFilter(filter);
@@ -244,6 +248,7 @@ public class Interface extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				final JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setDialogTitle("Select destination folder");
 				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				fileChooser.setAcceptAllFileFilterUsed(false);
 				int temp = fileChooser.showOpenDialog(null);

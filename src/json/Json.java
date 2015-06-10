@@ -33,9 +33,12 @@ public class Json/*@bgen(jjtree)*/implements JsonTreeConstants, JsonConstants {/
   }
   ;
 
+  private static boolean noColors = false;
+
   public static void main(String args []) throws ParseException, FileNotFoundException, UnsupportedEncodingException
   {
     syntaticError = false;
+    noColors = false;
     Json json = new Json(new java.io.FileInputStream(args [0]));
     SimpleNode root = json.Expression();
     System.out.println();
@@ -73,6 +76,11 @@ public class Json/*@bgen(jjtree)*/implements JsonTreeConstants, JsonConstants {/
         Random rand = new Random();
         do
         {
+          if (groupColor.size() == colors.length)
+          {
+            noColors = true;
+            break;
+          }
           colorID = rand.nextInt(colors.length);
         }
         while (groupColor.containsValue(colorID));
@@ -180,8 +188,12 @@ public class Json/*@bgen(jjtree)*/implements JsonTreeConstants, JsonConstants {/
     gv.addln(gv.start_graph());
     for (int i = 0; i < nodes.length; i++)
     {
-      String nodeString = nodes [i].getName() + "[color=\u005c"" + colors [groupColor.get(nodes [i].getGroup())] + "\u005c" style=filled";
-      System.out.println(colors [groupColor.get(nodes [i].getGroup())]);
+      String nodeString;
+      if (noColors)
+      {
+        nodeString = nodes [i].getName() + "[";
+      }
+      else nodeString = nodes [i].getName() + "[color=\u005c"" + colors [groupColor.get(nodes [i].getGroup())] + "\u005c" style=filled";
       if (!nodes [i].getShape().equals(""))
       {
         nodeString += " shape=" + nodes [i].getShape();
